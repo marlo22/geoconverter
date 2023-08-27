@@ -1,6 +1,10 @@
 # geoconverter
 A simple CLI tool for fast CRS transformation of geographic coordinates.
 
+<p align="center">
+  <img src="docs/terminal.gif" alt="Tool preview">
+</p>
+
 ## Quick examples
 - Transform coordinates passed directly as a CLI argument from EPSG:4326 to EPSG:3857.
 ```sh
