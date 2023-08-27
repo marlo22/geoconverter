@@ -1,5 +1,24 @@
-use proj::Proj;
+use std::{path::PathBuf, env::current_dir};
+
+use proj::ProjBuilder;
 use serde_json::{json, Value};
+
+fn get_proj_resources_path() -> PathBuf {
+    let mut path = PathBuf::new();
+    path.push(current_dir().unwrap().as_path());
+    path.push("proj");
+    path
+}
+
+fn build_proj_instance() -> ProjBuilder {
+    let mut proj_instance = ProjBuilder::new();
+
+    if let Err(err) = proj_instance.set_search_paths(get_proj_resources_path().as_path()) {
+        eprintln!("Failed to set the path to the provided resources of the PROJ library: {}", err);
+    }
+
+    proj_instance
+}
 
 fn iterate_through_coords(coordinates: &mut Vec<Value>, input_crs: &str, output_crs: &str) {
     for item in coordinates {
@@ -30,8 +49,8 @@ fn transform_point_coordinates(
     input_crs: &str,
     output_crs: &str,
 ) -> (f64, f64) {
-    let proj_transform =
-        Proj::new_known_crs(input_crs, output_crs, None).expect("Projection error!");
+    let proj = build_proj_instance();
+    let proj_transform = proj.proj_known_crs(input_crs, output_crs, None).expect("Projection error!");
     
     proj_transform
         .convert(coordinates)
